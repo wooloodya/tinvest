@@ -1,4 +1,3 @@
-
 language: python
 
 cache: pip
@@ -11,10 +10,10 @@ install:
   - poetry install
 
 script:
-  - make lint test BIN=""
+  - make test BIN=""
 
-after_success:
-  - codecov
+# after_success:
+#   - codecov
 
 before_deploy:
   - poetry build

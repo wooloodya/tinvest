@@ -4,7 +4,6 @@
 pip install tinvest
 ```
 
-
 ```python
 import asyncio
 
@@ -15,17 +14,17 @@ TOKEN = "<TOKEN>"
 handlers = tinvest.StreamingHandlers()
 
 
-@handlers.candle("BBG005DXJS36", "1min")
+@handlers.candle("BBG0013HGFT4", "1min")
 async def candle(payload):
     print(payload)
 
 
-@handlers.instrument_info("BBG005DXJS36", "123ASD1123")
+@handlers.instrument_info("BBG0013HGFT4", "123ASD1123")
 async def instrument_info(payload):
     print(payload)
 
 
-@handlers.orderbook("BBG005DXJS36", depth=5)
+@handlers.orderbook("BBG0013HGFT4", depth=5)
 async def orderbook(payload):
     print(payload)
 
@@ -42,4 +41,38 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         pass
 
+```
+
+```python
+import tinvest
+
+TOKEN = "<TOKEN>"
+
+client = tinvest.SyncClient(TOKEN)
+api = tinvest.PortfolioApi(client)
+
+response = api.portfolio_get()
+data = response.json()
+print(tinvest.PortfolioResponse(**data))
+```
+
+```python
+import asyncio
+import tinvest
+
+TOKEN = "<TOKEN>"
+
+client = tinvest.AsyncClient(TOKEN)
+api = tinvest.PortfolioApi(client)
+
+
+async def request():
+    await client.init_autoclose()
+    async with api.portfolio_get() as response:
+        data = await response.json()
+        print(tinvest.PortfolioResponse(**data))
+
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(request())
 ```
