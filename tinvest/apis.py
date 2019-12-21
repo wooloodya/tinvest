@@ -1,9 +1,9 @@
 class SandboxApi:
-    """"Операция в sandbox"""
+    """Операция в sandbox"""
 
     def __init__(self, client):
         self._client = client
-
+    
     def sandbox_register_post(self, **kwargs):
         """POST /sandbox/register Регистрация клиента в sandbox"""
         return self._client.request("POST", "/sandbox/register", **kwargs)
@@ -22,11 +22,11 @@ class SandboxApi:
 
 
 class OrdersApi:
-    """"Операции заявок"""
+    """Операции заявок"""
 
     def __init__(self, client):
         self._client = client
-
+    
     def orders_get(self, **kwargs):
         """GET /orders Получение списка активных заявок"""
         return self._client.request("GET", "/orders", **kwargs)
@@ -41,11 +41,11 @@ class OrdersApi:
 
 
 class PortfolioApi:
-    """"Операции с портфелем пользователя"""
+    """Операции с портфелем пользователя"""
 
     def __init__(self, client):
         self._client = client
-
+    
     def portfolio_get(self, **kwargs):
         """GET /portfolio Получение портфеля клиента"""
         return self._client.request("GET", "/portfolio", **kwargs)
@@ -56,11 +56,11 @@ class PortfolioApi:
 
 
 class MarketApi:
-    """"Получении информации по бумагам"""
+    """Получении информации по бумагам"""
 
     def __init__(self, client):
         self._client = client
-
+    
     def market_stocks_get(self, **kwargs):
         """GET /market/stocks Получение списка акций"""
         return self._client.request("GET", "/market/stocks", **kwargs)
@@ -95,11 +95,11 @@ class MarketApi:
 
 
 class OperationsApi:
-    """"Получении информации по операциям"""
+    """Получении информации по операциям"""
 
     def __init__(self, client):
         self._client = client
-
+    
     def operations_get(self, **kwargs):
         """GET /operations Получение списка операций"""
         return self._client.request("GET", "/operations", **kwargs)

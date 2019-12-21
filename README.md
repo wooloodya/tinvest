@@ -11,33 +11,58 @@ import tinvest
 
 TOKEN = "<TOKEN>"
 
-handlers = tinvest.StreamingHandlers()
+events = tinvest.StreamingEvents()
 
 
-@handlers.candle("BBG0013HGFT4", "1min")
-async def candle(payload):
+@events.candle()
+async def handle_candle(
+    api: tinvest.StreamingApi, payload: tinvest.CandleStreamingSchema
+):
     print(payload)
 
 
-@handlers.instrument_info("BBG0013HGFT4", "123ASD1123")
-async def instrument_info(payload):
+@events.orderbook()
+async def handle_orderbook(
+    api: tinvest.StreamingApi, payload: tinvest.OrderbookStreamingSchema
+):
     print(payload)
 
 
-@handlers.orderbook("BBG0013HGFT4", depth=5)
-async def orderbook(payload):
+@events.instrument_info()
+async def handle_instrument_info(
+    api: tinvest.StreamingApi, payload: tinvest.InstrumentInfoStreamingSchema
+):
     print(payload)
+
+
+@events.error()
+async def handle_error(
+    api: tinvest.StreamingApi, payload: tinvest.ErrorStreamingSchema
+):
+    print(payload)
+
+
+@events.startup()
+async def startup(api: tinvest.StreamingApi):
+    await api.candle.subscribe("BBG0013HGFT4", "1min")
+    await api.orderbook.subscribe("BBG0013HGFT4", 5, "123ASD1123")
+    await api.instrument_info.subscribe("BBG0013HGFT4")
+
+
+@events.cleanup()
+async def cleanup(api: tinvest.StreamingApi):
+    await api.candle.unsubscribe("BBG0013HGFT4", "1min")
+    await api.orderbook.unsubscribe("BBG0013HGFT4", 5)
+    await api.instrument_info.unsubscribe("BBG0013HGFT4")
 
 
 async def main():
-    await tinvest.Streaming(TOKEN).add_handlers(handlers).run()
+    await tinvest.Streaming(TOKEN).add_handlers(events).run()
 
 
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
     try:
-        loop.run_until_complete(main())
-        loop.run_forever()
+        asyncio.run(main())
     except KeyboardInterrupt:
         pass
 
@@ -67,7 +92,6 @@ api = tinvest.PortfolioApi(client)
 
 
 async def request():
-    await client.init_autoclose()
     async with api.portfolio_get() as response:
         data = await response.json()
         print(tinvest.PortfolioResponse(**data))

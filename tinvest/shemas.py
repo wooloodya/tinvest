@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Any, Dict, Optional, List
+from typing import Any, Dict, Optional, List, Tuple
 
 from pydantic import BaseModel
 
@@ -383,3 +383,28 @@ class SandboxSetCurrencyBalanceRequest(BaseModel):
 class SandboxSetPositionBalanceRequest(BaseModel):
     balance: float
     figi: Optional[str]
+
+
+class InstrumentInfoStreamingSchema(BaseModel):
+    figi: str
+    trade_status: str
+    min_price_increment: float
+    lot: float
+    accrued_interest: Optional[float]
+    limit_up: Optional[float]
+    limit_down: Optional[float]
+
+
+class OrderbookStreamingSchema(BaseModel):
+    figi: str
+    depth: int
+    bids: List[Tuple[float, float]]
+    asks: List[Tuple[float, float]]
+
+
+class ErrorStreamingSchema(BaseModel):
+    error: str
+    request_id: Optional[str]
+
+
+CandleStreamingSchema = Candle

@@ -7,7 +7,7 @@ from .apis import (
 )
 
 from .async_client import AsyncClient
-from .streaming import Streaming, StreamingHandlers
+from .streaming import Streaming, StreamingApi, StreamingEvents
 from .sync_client import SyncClient
 from .shemas import (
     Candle,
@@ -51,13 +51,18 @@ from .shemas import (
     SandboxSetCurrencyBalanceRequest,
     SandboxSetPositionBalanceRequest,
     TradeStatus,
+    CandleStreamingSchema,
+    InstrumentInfoStreamingSchema,
+    OrderbookStreamingSchema,
+    ErrorStreamingSchema,
 )
 
 __all__ = (
     "AsyncClient",
     "SyncClient",
     "Streaming",
-    "StreamingHandlers",
+    "StreamingApi",
+    "StreamingEvents",
     "Candle",
     "CandleResolution",
     "Candles",
@@ -104,4 +109,8 @@ __all__ = (
     "PortfolioApi",
     "MarketApi",
     "OperationsApi",
+    "CandleStreamingSchema",
+    "InstrumentInfoStreamingSchema",
+    "OrderbookStreamingSchema",
+    "ErrorStreamingSchema",
 )

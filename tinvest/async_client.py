@@ -12,16 +12,15 @@ class AsyncClient(BaseClient):
         if self._session is None:
             self._session = ClientSession(raise_for_status=True)
 
-    def request(self, method: str, path: str, /, **kwargs):
+    def request(self, method: str, path: str, **kwargs):
         url = self._api + path
 
         set_default_headers(kwargs, self._token)
 
         return self._session.request(method, url, **kwargs)
 
-    async def init_autoclose(self, loop=None):
-        if not loop:
-            loop = asyncio.get_event_loop()
+    async def init_autoclose(self):
+        loop = asyncio.get_event_loop()
 
         async def idle():
             try:
