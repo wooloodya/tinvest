@@ -102,7 +102,9 @@ class _BaseEvent:
 class CandleEvent(_BaseEvent):
     INTERVALS = tuple(c.value for c in CandleResolution)
 
-    def subscribe(self, figi: str, interval: str, request_id: Optional[str] = None):
+    def subscribe(
+        self, figi: str, interval: CandleResolution, request_id: Optional[str] = None
+    ):
         return self._send(
             {
                 "event": f"{EventName.candle}:subscribe",
@@ -110,7 +112,9 @@ class CandleEvent(_BaseEvent):
             }
         )
 
-    def unsubscribe(self, figi: str, interval: str, request_id: Optional[str] = None):
+    def unsubscribe(
+        self, figi: str, interval: CandleResolution, request_id: Optional[str] = None
+    ):
         return self._send(
             {
                 "event": f"{EventName.candle}:unsubscribe",
@@ -118,7 +122,9 @@ class CandleEvent(_BaseEvent):
             }
         )
 
-    def _get_payload(self, figi: str, interval: str, request_id: Optional[str] = None):
+    def _get_payload(
+        self, figi: str, interval: CandleResolution, request_id: Optional[str] = None
+    ):
         if interval not in self.INTERVALS:
             raise ValueError(f"{interval} not in {self.INTERVALS}")
 

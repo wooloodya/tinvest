@@ -12,9 +12,8 @@ class SyncClient(BaseClient):
 
     def request(self, method: str, path: str, raise_for_status: bool = True, **kwargs):
         url = self._api + path
-
         set_default_headers(kwargs, self._token)
-
+        
         response = self._session.request(method, url, **kwargs)
 
         if raise_for_status:

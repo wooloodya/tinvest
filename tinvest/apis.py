@@ -1,19 +1,36 @@
+from typing import Optional
+
+from .shemas import (
+    SandboxSetCurrencyBalanceRequest,
+    SandboxSetPositionBalanceRequest,
+    LimitOrderRequest,
+    Empty,
+    CandleResolution,
+)
+
+
 class SandboxApi:
     """Операция в sandbox"""
 
     def __init__(self, client):
         self._client = client
-    
+
     def sandbox_register_post(self, **kwargs):
         """POST /sandbox/register Регистрация клиента в sandbox"""
         return self._client.request("POST", "/sandbox/register", **kwargs)
 
-    def sandbox_currencies_balance_post(self, **kwargs):
+    def sandbox_currencies_balance_post(
+        self, body: SandboxSetCurrencyBalanceRequest, **kwargs
+    ):
         """POST /sandbox/currencies/balance Выставление баланса по валютным позициям"""
+        kwargs.setdefault("data", body.json(by_alias=True))
         return self._client.request("POST", "/sandbox/currencies/balance", **kwargs)
 
-    def sandbox_positions_balance_post(self, **kwargs):
+    def sandbox_positions_balance_post(
+        self, body: SandboxSetPositionBalanceRequest, **kwargs
+    ):
         """POST /sandbox/positions/balance Выставление баланса по инструментным позициям"""
+        kwargs.setdefault("data", body.json(by_alias=True))
         return self._client.request("POST", "/sandbox/positions/balance", **kwargs)
 
     def sandbox_clear_post(self, **kwargs):
@@ -26,17 +43,26 @@ class OrdersApi:
 
     def __init__(self, client):
         self._client = client
-    
+
     def orders_get(self, **kwargs):
         """GET /orders Получение списка активных заявок"""
         return self._client.request("GET", "/orders", **kwargs)
 
-    def orders_limit_order_post(self, **kwargs):
+    def orders_limit_order_post(self, figi: str, body: LimitOrderRequest, **kwargs):
         """POST /orders/limit-order Создание лимитной заявки"""
+        kwargs.setdefault("params", {})
+        params = kwargs["params"]
+        params.setdefault("figi", figi)
+        kwargs.setdefault("data", body.json(by_alias=True))
         return self._client.request("POST", "/orders/limit-order", **kwargs)
 
-    def orders_cancel_post(self, **kwargs):
+    def orders_cancel_post(self, order_id: str, body: Optional[Empty] = None, **kwargs):
         """POST /orders/cancel Отмена заявки"""
+        kwargs.setdefault("params", {})
+        params = kwargs["params"]
+        params.setdefault("orderId", order_id)
+        if body:
+            kwargs.setdefault("data", body.json(by_alias=True))
         return self._client.request("POST", "/orders/cancel", **kwargs)
 
 
@@ -45,7 +71,7 @@ class PortfolioApi:
 
     def __init__(self, client):
         self._client = client
-    
+
     def portfolio_get(self, **kwargs):
         """GET /portfolio Получение портфеля клиента"""
         return self._client.request("GET", "/portfolio", **kwargs)
@@ -60,7 +86,7 @@ class MarketApi:
 
     def __init__(self, client):
         self._client = client
-    
+
     def market_stocks_get(self, **kwargs):
         """GET /market/stocks Получение списка акций"""
         return self._client.request("GET", "/market/stocks", **kwargs)
@@ -77,20 +103,37 @@ class MarketApi:
         """GET /market/currencies Получение списка валютных пар"""
         return self._client.request("GET", "/market/currencies", **kwargs)
 
-    def market_orderbook_get(self, **kwargs):
+    def market_orderbook_get(self, figi: str, depth: int, **kwargs):
         """GET /market/orderbook Получение стакана"""
+        kwargs.setdefault("params", {})
+        params = kwargs["params"]
+        params.setdefault("figi", figi)
+        params.setdefault("depth", depth)
         return self._client.request("GET", "/market/orderbook", **kwargs)
 
-    def market_candles_get(self, **kwargs):
+    def market_candles_get(
+        self, figi: str, from_: str, to: str, interval: CandleResolution, **kwargs
+    ):
         """GET /market/candles Получение исторических свечей по FIGI"""
+        kwargs.setdefault("params", {})
+        params = kwargs["params"]
+        params.setdefault("figi", figi)
+        params.setdefault("from", from_)
+        params.setdefault("to", to)
         return self._client.request("GET", "/market/candles", **kwargs)
 
-    def market_search_by_figi_get(self, **kwargs):
+    def market_search_by_figi_get(self, figi: str, **kwargs):
         """GET /market/search/by-figi Получение инструмента по FIGI"""
+        kwargs.setdefault("params", {})
+        params = kwargs["params"]
+        params.setdefault("figi", figi)
         return self._client.request("GET", "/market/search/by-figi", **kwargs)
 
-    def market_search_by_ticker_get(self, **kwargs):
+    def market_search_by_ticker_get(self, ticker: str, **kwargs):
         """GET /market/search/by-ticker Получение инструмента по тикеру"""
+        kwargs.setdefault("params", {})
+        params = kwargs["params"]
+        params.setdefault("ticker", ticker)
         return self._client.request("GET", "/market/search/by-ticker", **kwargs)
 
 
@@ -99,8 +142,14 @@ class OperationsApi:
 
     def __init__(self, client):
         self._client = client
-    
-    def operations_get(self, **kwargs):
+
+    def operations_get(self, from_: str, to: str, figi: Optional[str] = None, **kwargs):
         """GET /operations Получение списка операций"""
+        kwargs.setdefault("params", {})
+        params = kwargs["params"]
+        params.setdefault("from", from_)
+        params.setdefault("to", to)
+        if figi:
+            params.setdefault("figi", figi)
         return self._client.request("GET", "/operations", **kwargs)
 

@@ -14,7 +14,6 @@ class AsyncClient(BaseClient):
 
     def request(self, method: str, path: str, **kwargs):
         url = self._api + path
-
         set_default_headers(kwargs, self._token)
 
         return self._session.request(method, url, **kwargs)

@@ -5,7 +5,6 @@ from .apis import (
     MarketApi,
     OperationsApi,
 )
-
 from .async_client import AsyncClient
 from .streaming import Streaming, StreamingApi, StreamingEvents
 from .sync_client import SyncClient
