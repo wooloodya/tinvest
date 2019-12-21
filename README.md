@@ -77,8 +77,16 @@ client = tinvest.SyncClient(TOKEN)
 api = tinvest.PortfolioApi(client)
 
 response = api.portfolio_get()
-data = response.json()
-print(tinvest.PortfolioResponse(**data))
+print(response.parse_json())  # tinvest.PortfolioResponse
+```
+
+```python
+# Handle error
+...
+api = tinvest.OperationsApi(client)
+
+response = api.operations_get("", "", raise_for_status=False)
+print(response.parse_error())  # tinvest.Error
 ```
 
 ```python
@@ -93,8 +101,7 @@ api = tinvest.PortfolioApi(client)
 
 async def request():
     async with api.portfolio_get() as response:
-        data = await response.json()
-        print(tinvest.PortfolioResponse(**data))
+        print(await response.parse_json())  # tinvest.PortfolioResponse
 
 
 loop = asyncio.get_event_loop()

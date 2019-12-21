@@ -1,11 +1,11 @@
 [tool.poetry]
 name = "tinvest"
-version = "1.0.4"
+version = "1.0.6"
 description = "Tinkoff Invest"
-authors = ["Danil Akhtarov <daxatio@gmail.com>"]
+authors = ["Danil Akhtarov <daxartio@gmail.com>"]
 license = "MIT"
 readme = 'README.md'
-repository = "https://github.com/daxatio/tinvest"
+repository = "https://github.com/daxartio/tinvest"
 homepage = "https://pypi.org/project/tinvest"
 keywords = []
 
