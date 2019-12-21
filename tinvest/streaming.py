@@ -30,7 +30,7 @@ class EventName(str, Enum):
 
 
 class Streaming:
-    def __init__(self, token: str, session=None):
+    def __init__(self, token: str, session=None, state=None):
         super().__init__()
         if not token:
             raise ValueError("Token cannot be empty")
@@ -38,6 +38,7 @@ class Streaming:
         self._token: str = token
         self._session: aiohttp.ClientSession = session or aiohttp.ClientSession()
         self._handlers: List[_Handler] = []
+        self._state = state
 
     def add_handlers(self, handlers):
         if isinstance(handlers, list):
@@ -55,7 +56,7 @@ class Streaming:
             self._api, headers={"Authorization": f"Bearer {self._token}",}
         ) as ws:
             try:
-                api = StreamingApi(ws)
+                api = StreamingApi(ws, self._state)
                 funcs = self._get_handlers("startup")
                 await asyncio.gather(*[Func(func, api)() for func in funcs])
 
@@ -80,7 +81,6 @@ class Streaming:
                             *[Func(func, api, data)() for func in funcs]
                         )
                     elif msg.type == aiohttp.WSMsgType.CLOSED:
-
                         break
                     elif msg.type == aiohttp.WSMsgType.ERROR:
                         break
@@ -212,7 +212,11 @@ class StreamingEvents:
 
 
 class StreamingApi:
-    def __init__(self, ws):
+    def __init__(self, ws, state=None):
         self.candle = CandleEvent(ws)
         self.orderbook = OrderbookEvent(ws)
         self.instrument_info = InstrumentInfoEvent(ws)
+        self._state = state
+
+    def __getitem__(self, key: str) -> Any:
+        return self._state[key]

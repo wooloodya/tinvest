@@ -57,7 +57,7 @@ async def cleanup(api: tinvest.StreamingApi):
 
 
 async def main():
-    await tinvest.Streaming(TOKEN).add_handlers(events).run()
+    await tinvest.Streaming(TOKEN, state={"postgres": ...}).add_handlers(events).run()
 
 
 if __name__ == "__main__":
