@@ -8,20 +8,18 @@ except ImportError:  # pragma: no cover
     contextvars = None  # type: ignore
 
 
-def set_default_headers(data, token):
-    headers = data.get("headers", {})
-    headers.setdefault("accept", "application/json")
-    headers.setdefault("Authorization", f"Bearer {token}")
-    data["headers"] = headers
+def set_default_headers(data: typing.Dict, token: str) -> None:
+    headers = data.get('headers', {})
+    headers.setdefault('accept', 'application/json')
+    headers.setdefault('Authorization', f'Bearer {token}')
+    data['headers'] = headers
 
 
-T = typing.TypeVar("T")
+T = typing.TypeVar('T')
 
 
 class Func:
-    def __init__(
-        self, func: typing.Callable, *args: typing.Any, **kwargs: typing.Any
-    ) -> None:
+    def __init__(self, func: typing.Callable, *args: typing.Any, **kwargs: typing.Any) -> None:
         self.func = func
         self.args = args
         self.kwargs = kwargs
@@ -34,9 +32,7 @@ class Func:
             await run_in_threadpool(self.func, *self.args, **self.kwargs)
 
 
-async def run_in_threadpool(
-    func: typing.Callable[..., T], *args: typing.Any, **kwargs: typing.Any
-) -> T:
+async def run_in_threadpool(func: typing.Callable[..., T], *args: typing.Any, **kwargs: typing.Any) -> T:
     loop = asyncio.get_event_loop()
     if contextvars is not None:  # pragma: no cover
         # Ensure we run in the same context
