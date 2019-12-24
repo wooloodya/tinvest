@@ -31,35 +31,35 @@ class SandboxApi(BaseApi):
     """Операция в sandbox"""
 
     def sandbox_register_post(self, **kwargs: Any) -> Any:
-        """POST /sandbox/register Регистрация клиента в sandbox"""
+        """POST /sandbox/sandbox/register Регистрация клиента в sandbox"""
         return self.client.request(
-            'POST', '/sandbox/register', response_model=Empty, **kwargs
+            'POST', '/sandbox/sandbox/register', response_model=Empty, **kwargs
         )
 
     def sandbox_currencies_balance_post(
         self, body: SandboxSetCurrencyBalanceRequest, **kwargs: Any
     ) -> Any:
-        """POST /sandbox/currencies/balance
+        """POST /sandbox/sandbox/currencies/balance
         Выставление баланса по валютным позициям"""
         kwargs.setdefault('data', body.json(by_alias=True))
         return self.client.request(
-            'POST', '/sandbox/currencies/balance', response_model=Empty, **kwargs,
+            'POST', '/sandbox/sandbox/currencies/balance', response_model=Empty, **kwargs,
         )
 
     def sandbox_positions_balance_post(
         self, body: SandboxSetPositionBalanceRequest, **kwargs: Any
     ) -> Any:
-        """POST /sandbox/positions/balance
+        """POST /sandbox/sandbox/positions/balance
         Выставление баланса по инструментным позициям"""
         kwargs.setdefault('data', body.json(by_alias=True))
         return self.client.request(
-            'POST', '/sandbox/positions/balance', response_model=Empty, **kwargs,
+            'POST', '/sandbox/sandbox/positions/balance', response_model=Empty, **kwargs,
         )
 
     def sandbox_clear_post(self, **kwargs: Any) -> Any:
-        """POST /sandbox/clear Удаление всех позиций"""
+        """POST /sandbox/sandbox/clear Удаление всех позиций"""
         return self.client.request(
-            'POST', '/sandbox/clear', response_model=Empty, **kwargs
+            'POST', '/sandbox/sandbox/clear', response_model=Empty, **kwargs
         )
 
 
