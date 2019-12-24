@@ -13,8 +13,8 @@ install:
 script:
   - make test BIN=""
 
-# after_success:
-#   - codecov
+after_success:
+  - codecov
 
 before_deploy:
   - poetry build

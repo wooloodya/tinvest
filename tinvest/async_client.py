@@ -31,7 +31,9 @@ class AsyncClient(BaseClient[ClientSession]):
         await self.session.close()
 
 
-async def _parse_json(response: ClientResponse, response_model: Any = None, **kwargs: Any) -> Any:
+async def _parse_json(
+    response: ClientResponse, response_model: Any = None, **kwargs: Any
+) -> Any:
     if response_model is None:
         return await response.json(**kwargs)
     return response_model.parse_obj(await response.json(**kwargs))

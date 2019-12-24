@@ -13,7 +13,7 @@ from .shemas import (
     InstrumentInfoStreamingSchema,
     OrderbookStreamingSchema,
 )
-from .types import AnyDict
+from .typedefs import AnyDict
 from .utils import Func
 
 logger = logging.getLogger(__name__)
@@ -38,7 +38,9 @@ class Streaming:
         EventName.error: ErrorStreamingSchema,
     }
 
-    def __init__(self, token: str, session=None, state: AnyDict = None) -> None:
+    def __init__(
+        self, token: str, session=None, state: Optional[AnyDict] = None
+    ) -> None:
         super().__init__()
         if not token:
             raise ValueError('Token cannot be empty')
@@ -48,7 +50,9 @@ class Streaming:
         self._handlers: List[_Handler] = []
         self._state = state
 
-    def add_handlers(self, handlers: Union[List[_Handler], 'StreamingEvents']) -> 'Streaming':
+    def add_handlers(
+        self, handlers: Union[List[_Handler], 'StreamingEvents']
+    ) -> 'Streaming':
         if isinstance(handlers, list):
             self._handlers.extend(handlers)
         else:
@@ -60,7 +64,9 @@ class Streaming:
         return [func for name, func in self._handlers if name == event_name]
 
     async def run(self) -> None:
-        async with self._session.ws_connect(self._api, headers={'Authorization': f'Bearer {self._token}'}) as ws:
+        async with self._session.ws_connect(
+            self._api, headers={'Authorization': f'Bearer {self._token}'}
+        ) as ws:
             try:
                 api = StreamingApi(ws, self._state)
                 funcs = self._get_handlers('startup')
@@ -76,7 +82,9 @@ class Streaming:
                             data = self.schemas[event_name].parse_obj(payload)
                         else:
                             data = payload
-                        await asyncio.gather(*[Func(func, api, data)() for func in funcs])
+                        await asyncio.gather(
+                            *[Func(func, api, data)() for func in funcs]
+                        )
                     elif msg.type == aiohttp.WSMsgType.CLOSED:
                         break
                     elif msg.type == aiohttp.WSMsgType.ERROR:
@@ -102,12 +110,22 @@ class CandleEvent(_BaseEvent):
     def subscribe(
         self, figi: str, interval: CandleResolution, request_id: Optional[str] = None,
     ):
-        return self._send({'event': f'{EventName.candle}:subscribe', **self._get_payload(figi, interval, request_id)})
+        return self._send(
+            {
+                'event': f'{EventName.candle}:subscribe',
+                **self._get_payload(figi, interval, request_id),
+            }
+        )
 
     def unsubscribe(
         self, figi: str, interval: CandleResolution, request_id: Optional[str] = None,
     ):
-        return self._send({'event': f'{EventName.candle}:unsubscribe', **self._get_payload(figi, interval, request_id)})
+        return self._send(
+            {
+                'event': f'{EventName.candle}:unsubscribe',
+                **self._get_payload(figi, interval, request_id),
+            }
+        )
 
     def _get_payload(
         self, figi: str, interval: CandleResolution, request_id: Optional[str] = None,
@@ -123,10 +141,20 @@ class CandleEvent(_BaseEvent):
 
 class OrderbookEvent(_BaseEvent):
     def subscribe(self, figi: str, depth: int = 2, request_id: Optional[str] = None):
-        return self._send({'event': f'{EventName.orderbook}:subscribe', **self._get_payload(figi, depth, request_id)})
+        return self._send(
+            {
+                'event': f'{EventName.orderbook}:subscribe',
+                **self._get_payload(figi, depth, request_id),
+            }
+        )
 
     def unsubscribe(self, figi: str, depth: int = 2, request_id: Optional[str] = None):
-        return self._send({'event': f'{EventName.orderbook}:unsubscribe', **self._get_payload(figi, depth, request_id)})
+        return self._send(
+            {
+                'event': f'{EventName.orderbook}:unsubscribe',
+                **self._get_payload(figi, depth, request_id),
+            }
+        )
 
     @staticmethod
     def _get_payload(figi: str, depth: int = 2, request_id: Optional[str] = None):
@@ -140,10 +168,20 @@ class OrderbookEvent(_BaseEvent):
 
 class InstrumentInfoEvent(_BaseEvent):
     def subscribe(self, figi: str, request_id: Optional[str] = None):
-        return self._send({'event': f'{EventName.instrument_info}:subscribe', **self._get_payload(figi, request_id)})
+        return self._send(
+            {
+                'event': f'{EventName.instrument_info}:subscribe',
+                **self._get_payload(figi, request_id),
+            }
+        )
 
     def unsubscribe(self, figi: str, request_id: Optional[str] = None):
-        return self._send({'event': f'{EventName.instrument_info}:unsubscribe', **self._get_payload(figi, request_id)})
+        return self._send(
+            {
+                'event': f'{EventName.instrument_info}:unsubscribe',
+                **self._get_payload(figi, request_id),
+            }
+        )
 
     @staticmethod
     def _get_payload(figi: str, request_id: Optional[str] = None):

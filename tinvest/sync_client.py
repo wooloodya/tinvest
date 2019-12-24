@@ -14,7 +14,12 @@ class SyncClient(BaseClient[Session]):
             self._session = session()
 
     def request(
-        self, method: str, path: str, response_model=None, raise_for_status: bool = True, **kwargs,
+        self,
+        method: str,
+        path: str,
+        response_model=None,
+        raise_for_status: bool = True,
+        **kwargs,
     ):
         url = self._api + path
         set_default_headers(kwargs, self._token)

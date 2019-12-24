@@ -76,7 +76,7 @@ TOKEN = "<TOKEN>"
 client = tinvest.SyncClient(TOKEN)
 api = tinvest.PortfolioApi(client)
 
-response = api.portfolio_get()
+response = api.portfolio_get()  # requests.Response
 print(response.parse_json())  # tinvest.PortfolioResponse
 ```
 
@@ -100,7 +100,7 @@ api = tinvest.PortfolioApi(client)
 
 
 async def request():
-    async with api.portfolio_get() as response:
+    async with api.portfolio_get() as response:  # aiohttp.ClientResponse
         print(await response.parse_json())  # tinvest.PortfolioResponse
 
 

@@ -2,6 +2,8 @@
 .PHONY: init test lint pretty precommit_install bump_major bump_minor bump_patch
 
 BIN = .venv/bin/
+BIN = venv/Scripts/
+
 CODE = tinvest
 
 init:
@@ -14,13 +16,13 @@ test:
 lint:
 	$(BIN)flake8 --jobs 4 --statistics --show-source $(CODE) tests
 	$(BIN)pylint --jobs 4 --rcfile=setup.cfg $(CODE)
-	$(BIN)black --skip-string-normalization --line-length=120 --check $(CODE) tests
+	$(BIN)black --skip-string-normalization --line-length=88 --check $(CODE) tests
 	$(BIN)pytest --dead-fixtures --dup-fixtures
 	$(BIN)mypy $(CODE) tests
 
 pretty:
 	$(BIN)isort --apply --recursive $(CODE) tests
-	$(BIN)black --skip-string-normalization --line-length=120 $(CODE) tests
+	$(BIN)black --skip-string-normalization --line-length=88 $(CODE) tests
 	$(BIN)unify --in-place --recursive $(CODE) tests
 
 precommit_install:
