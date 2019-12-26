@@ -43,7 +43,10 @@ class SandboxApi(BaseApi):
         Выставление баланса по валютным позициям"""
         kwargs.setdefault('data', body.json(by_alias=True))
         return self.client.request(
-            'POST', '/sandbox/sandbox/currencies/balance', response_model=Empty, **kwargs,
+            'POST',
+            '/sandbox/sandbox/currencies/balance',
+            response_model=Empty,
+            **kwargs,
         )
 
     def sandbox_positions_balance_post(
@@ -53,7 +56,7 @@ class SandboxApi(BaseApi):
         Выставление баланса по инструментным позициям"""
         kwargs.setdefault('data', body.json(by_alias=True))
         return self.client.request(
-            'POST', '/sandbox/sandbox/positions/balance', response_model=Empty, **kwargs,
+            'POST', '/sandbox/sandbox/positions/balance', response_model=Empty, **kwargs
         )
 
     def sandbox_clear_post(self, **kwargs: Any) -> Any:

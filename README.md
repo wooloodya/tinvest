@@ -85,7 +85,7 @@ print(response.parse_json())  # tinvest.PortfolioResponse
 ...
 api = tinvest.OperationsApi(client)
 
-response = api.operations_get("", "", raise_for_status=False)
+response = api.operations_get("", "")
 print(response.parse_error())  # tinvest.Error
 ```
 

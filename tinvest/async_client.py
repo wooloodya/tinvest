@@ -13,11 +13,11 @@ class AsyncClient(BaseClient[ClientSession]):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self._session is None:
-            self._session = ClientSession(raise_for_status=True)
+            self._session = ClientSession()
 
     @asynccontextmanager
     async def request(self, method: str, path: str, response_model=None, **kwargs):
-        url = self._api + path
+        url = self._base_url + path
         set_default_headers(kwargs, self._token)
 
         async with self.session.request(method, url, **kwargs) as response:

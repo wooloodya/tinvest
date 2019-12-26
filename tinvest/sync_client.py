@@ -21,7 +21,7 @@ class SyncClient(BaseClient[Session]):
         raise_for_status: bool = True,
         **kwargs,
     ):
-        url = self._api + path
+        url = self._base_url + path
         set_default_headers(kwargs, self._token)
 
         response = self.session.request(method, url, **kwargs)
