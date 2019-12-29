@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "tinvest"
-version = "1.0.9"
+version = "1.0.10"
 description = "Tinkoff Invest"
 authors = ["Danil Akhtarov <daxartio@gmail.com>"]
 license = "MIT"
@@ -17,7 +17,6 @@ pydantic = ">=1.2,<2"
 
 [tool.poetry.dev-dependencies]
 black = {version = "^19.10b0", allows-prereleases = true}
-bumpversion = "^0.5.3"
 flake8-awesome = "^1.2"
 mypy = "^0.750.0"
 pylint = "^2.4"
