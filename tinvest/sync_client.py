@@ -38,7 +38,7 @@ class SyncClient(BaseClient[Session]):
         method: str,
         path: str,
         response_model: Any = None,
-        raise_for_status: bool = True,
+        raise_for_status: bool = False,
         **kwargs: Any,
     ) -> ResponseWrapper:
         url = self._base_url + path
