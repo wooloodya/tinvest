@@ -224,3 +224,12 @@ class OperationsApi(BaseApi):
         return self.client.request(
             'GET', '/operations', response_model=OperationsResponse, **kwargs
         )
+
+
+__all__ = (
+    'MarketApi',
+    'OperationsApi',
+    'OrdersApi',
+    'PortfolioApi',
+    'SandboxApi',
+)

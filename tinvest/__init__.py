@@ -50,11 +50,25 @@ from .streaming import Streaming, StreamingApi, StreamingEvents
 from .sync_client import SyncClient
 
 __all__ = (
+    # Http Clients
     'AsyncClient',
     'SyncClient',
+    # Streaming
     'Streaming',
     'StreamingApi',
     'StreamingEvents',
+    # Streaming Schemas
+    'CandleStreamingSchema',
+    'ErrorStreamingSchema',
+    'InstrumentInfoStreamingSchema',
+    'OrderbookStreamingSchema',
+    # API Clients
+    'MarketApi',
+    'OperationsApi',
+    'OrdersApi',
+    'PortfolioApi',
+    'SandboxApi',
+    # Schemas
     'Candle',
     'CandleResolution',
     'Candles',
@@ -95,13 +109,4 @@ __all__ = (
     'SandboxSetCurrencyBalanceRequest',
     'SandboxSetPositionBalanceRequest',
     'TradeStatus',
-    'SandboxApi',
-    'OrdersApi',
-    'PortfolioApi',
-    'MarketApi',
-    'OperationsApi',
-    'CandleStreamingSchema',
-    'InstrumentInfoStreamingSchema',
-    'OrderbookStreamingSchema',
-    'ErrorStreamingSchema',
 )

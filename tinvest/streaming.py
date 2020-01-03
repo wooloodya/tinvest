@@ -233,3 +233,14 @@ class StreamingApi:
         if self._state and key in self._state:
             return self._state[key]
         raise IndexError
+
+
+__all__ = (
+    'Streaming',
+    'StreamingApi',
+    'StreamingEvents',
+    'EventName',
+    'CandleEvent',
+    'OrderbookEvent',
+    'InstrumentInfoEvent',
+)

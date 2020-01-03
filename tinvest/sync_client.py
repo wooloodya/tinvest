@@ -52,3 +52,6 @@ class SyncClient(BaseClient[Session]):
             response.raise_for_status()
 
         return response
+
+
+__all__ = ('SyncClient', 'ResponseWrapper')

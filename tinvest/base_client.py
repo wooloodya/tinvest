@@ -18,3 +18,6 @@ class BaseClient(Generic[T]):
         if self._session:
             return self._session
         raise AttributeError
+
+
+__all__ = ('BaseClient',)

@@ -50,3 +50,6 @@ async def run_in_threadpool(
         # loop.run_in_executor doesn't accept 'kwargs', so bind them in here
         func = functools.partial(func, **kwargs)
     return await loop.run_in_executor(None, func, *args)
+
+
+__all__ = ('set_default_headers', 'Func', 'run_in_threadpool')
