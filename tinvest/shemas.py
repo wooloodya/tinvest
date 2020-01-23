@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple
 
-from pydantic import BaseModel
+from pydantic import BaseModel  # pylint: disable=E0611
 
 
 class CandleResolution(str, Enum):

@@ -29,6 +29,14 @@ class EventName(str, Enum):
     error = 'error'
 
 
+def _retry(func):
+    async def wrapper(self):
+        while True:
+            await func(self)
+
+    return wrapper
+
+
 class Streaming:
 
     schemas: Dict[EventName, Any] = {
@@ -38,8 +46,15 @@ class Streaming:
         EventName.error: ErrorStreamingSchema,
     }
 
-    def __init__(
-        self, token: str, session=None, state: Optional[AnyDict] = None
+    def __init__(  # pylint: disable=R0913
+        self,
+        token: str,
+        session=None,
+        state: Optional[AnyDict] = None,
+        reconnect_timeout: float = 3,
+        ws_close_timeout: float = 0,
+        receive_timeout: Optional[float] = 5,
+        heartbeat: Optional[float] = 3,
     ) -> None:
         super().__init__()
         if not token:
@@ -49,6 +64,10 @@ class Streaming:
         self._session: aiohttp.ClientSession = session or aiohttp.ClientSession()
         self._handlers: List[_Handler] = []
         self._state = state
+        self._reconnect_timeout = reconnect_timeout
+        self._ws_close_timeout = ws_close_timeout
+        self._receive_timeout = receive_timeout
+        self._heartbeat = heartbeat
 
     def add_handlers(
         self, handlers: Union[List[_Handler], 'StreamingEvents']
@@ -60,40 +79,56 @@ class Streaming:
 
         return self
 
+    @_retry
+    async def run(self) -> None:
+        try:
+            async with self._session.ws_connect(
+                self._api,
+                headers={'Authorization': f'Bearer {self._token}'},
+                heartbeat=self._heartbeat,
+                timeout=self._ws_close_timeout,
+                receive_timeout=self._receive_timeout,
+            ) as ws:
+                await self._run(ws)
+        except asyncio.CancelledError:
+            raise
+        except Exception as e:  # pylint: disable=W0703
+            logger.error('Connection error: %s. Try to reconnect', e)
+            await asyncio.sleep(self._reconnect_timeout)
+
+    async def _run(self, ws):
+        api = StreamingApi(ws, self._state)
+        try:
+            funcs = self._get_handlers('startup')
+            await asyncio.gather(*[Func(func, api)() for func in funcs])
+
+            async for msg in ws:
+                if msg.type == aiohttp.WSMsgType.TEXT:
+                    data = msg.json()
+                    event_name = data['event']
+                    payload = data['payload']
+                    funcs = self._get_handlers(event_name)
+                    if event_name in self.schemas:
+                        data = self.schemas[event_name].parse_obj(payload)
+                    else:
+                        data = payload
+                    await asyncio.gather(*[Func(func, api, data)() for func in funcs])
+                elif msg.type == aiohttp.WSMsgType.CLOSED:
+                    break
+                elif msg.type == aiohttp.WSMsgType.ERROR:
+                    break
+            await self._cleanup(api)
+        except asyncio.CancelledError:
+            await self._cleanup(api)
+            raise
+
     def _get_handlers(self, event_name):
         return [func for name, func in self._handlers if name == event_name]
 
-    async def run(self) -> None:
-        async with self._session.ws_connect(
-            self._api, headers={'Authorization': f'Bearer {self._token}'}
-        ) as ws:
-            try:
-                api = StreamingApi(ws, self._state)
-                funcs = self._get_handlers('startup')
-                await asyncio.gather(*[Func(func, api)() for func in funcs])
-
-                async for msg in ws:
-                    if msg.type == aiohttp.WSMsgType.TEXT:
-                        data = msg.json()
-                        event_name = data['event']
-                        payload = data['payload']
-                        funcs = self._get_handlers(event_name)
-                        if event_name in self.schemas:
-                            data = self.schemas[event_name].parse_obj(payload)
-                        else:
-                            data = payload
-                        await asyncio.gather(
-                            *[Func(func, api, data)() for func in funcs]
-                        )
-                    elif msg.type == aiohttp.WSMsgType.CLOSED:
-                        break
-                    elif msg.type == aiohttp.WSMsgType.ERROR:
-                        break
-            except asyncio.CancelledError:
-                funcs = self._get_handlers('cleanup')
-                await asyncio.gather(*[Func(func, api)() for func in funcs])
-                await self._session.close()
-                raise
+    async def _cleanup(self, api) -> None:
+        funcs = self._get_handlers('cleanup')
+        await asyncio.gather(*[Func(func, api)() for func in funcs])
+        await self._session.close()
 
 
 class _BaseEvent:
