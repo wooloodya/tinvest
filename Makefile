@@ -2,7 +2,6 @@
 .PHONY: init test lint pretty precommit_install bump_major bump_minor bump_patch
 
 BIN = .venv/bin/
-BIN = venv/Scripts/
 
 CODE = tinvest
 
