@@ -1,5 +1,6 @@
 from .apis import MarketApi, OperationsApi, OrdersApi, PortfolioApi, SandboxApi
 from .async_client import AsyncClient
+from .errors import StartupError
 from .shemas import (
     Candle,
     CandleResolution,
@@ -104,4 +105,5 @@ __all__ = (
     'InstrumentInfoStreamingSchema',
     'OrderbookStreamingSchema',
     'ErrorStreamingSchema',
+    'StartupError',
 )
